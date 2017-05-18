@@ -37,6 +37,10 @@ void printNumber(struct _number *n) {
 		printf("%.4f", n->type.dec);
 	} else if (n->status == RATIONAL) {
 		printRationalNumber(&(n->type.rat));
+	} else {
+		#if DEBUG
+			printf("[Error] Number has no status!\n");
+		#endif
 	}
 }
 
@@ -157,14 +161,21 @@ void convertToRational(struct _number *n) {
 			if (n->absval == -1) {
 				// Negative
 				
-				for (int i = -1; i >= (n->type.dec - 2); --i) {
-					for (int j = 1; j <= (-(n->type.dec) + 2); ++j) {
-							
-						if (( (double) i/ (double) j) == n->type.dec) {
+				for (int i = -1; i >= -RATIONAL_CONVERSION_PRECISION_LIMIT; --i) {
+					for (int j = 1; j <= RATIONAL_CONVERSION_PRECISION_LIMIT; ++j) {
+						printf("%i / %i = %f <--> %f\n", i, j, (double) i / (double) j, n->type.dec);
+						
+						if (((double) i / (double) j) == n->type.dec) {
 							n->status = RATIONAL;
 							
 							n->type.rat.n = i;
 							n->type.rat.d = j;
+						} else {
+							printf("%f == %f --> ", (double) i / (double) j, n->type.dec);
+							if (((double) i / (double) j) == n->type.dec)
+								printf("TRUE\n");
+							else
+								printf("FALSE\n");
 						}
 					}
 				}
@@ -178,8 +189,8 @@ void convertToRational(struct _number *n) {
 			} else if (n->absval == 1) {
 				// Number is positive
 				
-				for (int i = 1; i <= (n->type.dec + 2); ++i) {
-					for (int j = 1; j <= (n->type.dec + 2); ++j) {
+				for (int i = 1; i <= RATIONAL_CONVERSION_PRECISION_LIMIT; ++i) {
+					for (int j = 1; j <= RATIONAL_CONVERSION_PRECISION_LIMIT; ++j) {
 						if (((double) i/ (double) j) == n->type.dec) {
 							n->status = RATIONAL;
 							
@@ -219,53 +230,99 @@ struct _number addNumber(struct _number *a, struct _number *b) {
 	if (a->status == b->status) {
 		if (a->status == DECIMAL) {
 			// Perform float arithmetic
-			// ...
+			result.status = DECIMAL;
+			
+			result.type.dec = a->type.dec + b->type.dec;
 		} else {
 			// Perform rational arithmetic
+			if (a->type.rat.d != b->type.rat.d) {
+				result.status = RATIONAL;
+				
+				result.type.rat.n = (a->type.rat.n * b->type.rat.d) + (b->type.rat.n * a->type.rat.d);
+				result.type.rat.d = a->type.rat.d * b->type.rat.d;
+			} else {
+				result.status = RATIONAL;
+				
+				result.type.rat.n = a->type.rat.n + b->type.rat.n;
+				result.type.rat.d = a->type.rat.d;
+			}
 		}
 	} else {
 		if (a->status == RATIONAL) {
+			result.status = DECIMAL;
+			
 			convertToDecimal(a);
-			// Perform float arithmetic
-			// ...
+			result.type.dec = a->type.dec + b->type.dec;
+			convertToRational(a);
 		} else {
+			result.status = DECIMAL;
+			
 			convertToDecimal(b);
-			// Perform float arithmetic
-			// ...
+			result.type.dec = a->type.dec + b->type.dec;
+			convertToRational(a);
 		}
 	}
 	
-	/*
-	if (a->d != b->d) {
-		result.n = (a->n * b->d) + (b->n * a->d);
-		result.d = a->d * b->d;
-	} else {
-		result.n = a->n + b->n;
-		result.d = a->d;
-	}*/
-	
-	//simplify(&result);
 	return result;
 }
 
 
 /** Subtract Number */
-/*
+
 struct _number subNumber(struct _number *a, struct _number *b) {
 	struct _number result;
 	
-	if (a->d != b->d) {
-		result.n = (a->n * b->d) - (b->n * a->d);
-		result.d = a->d * b->d;
+	// Verify they are the same type
+	if (a->status == b->status) {
+		if (a->status == DECIMAL) {
+			// Do decimal arithmetic
+			result.status = DECIMAL;
+			
+			result.type.dec = a->type.dec - b->type.dec;
+		} else if (a->status == RATIONAL) {
+			// Do rational arithmetic
+			result.status = RATIONAL;
+			
+			if (a->type.rat.d != b->type.rat.d) {
+				result.status = RATIONAL;
+				
+				result.type.rat.n = (a->type.rat.n * b->type.rat.d) - (b->type.rat.n * a->type.rat.d);
+				result.type.rat.d = a->type.rat.d * b->type.rat.d;
+			} else {
+				result.status = RATIONAL;
+				
+				result.type.rat.n = a->type.rat.n - b->type.rat.n;
+				result.type.rat.d = a->type.rat.d;
+			}
+		} else {
+			#if DEBUG
+				printf("[Error] No type set!\n");
+			#endif
+		}
 	} else {
-		result.n = a->n - b->n;
-		result.d = a->d;
+		if (a->status == RATIONAL) {
+			result.status = DECIMAL;
+			
+			convertToDecimal(a);
+			result.type.dec = a->type.dec - b->type.dec;
+			convertToRational(a);
+		} else if (b->status == RATIONAL) {
+			result.status = DECIMAL;
+			
+			convertToDecimal(b);
+			result.type.dec = a->type.dec - b->type.dec;
+			convertToRational(b);
+		} else {
+			#if DEBUG
+				printf("[Error] Incorrect types on variables!\nFunction: %s\n", __func__);
+			#endif
+		}
 	}
 	
-	simplify(&result);
+	//simplify(&result);
 	return result;
 }
-*/
+
 
 
 /** Multiply Number */

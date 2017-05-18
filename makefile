@@ -8,8 +8,8 @@ all: csolver.exe
 #csolver.exe: $(OBJS)
 #	$(CC) $(OUTPUT) $(OBJS)
 
-csolver.exe: main.o number.o utils.o
-	$(CC) $(OUTPUT) main.o number.o utils.o
+csolver.exe: main.o number.o utils.o matrix.o
+	$(CC) $(OUTPUT) main.o number.o utils.o matrix.o
 	
 main.o: main.c
 	$(CC) $(CFLAGS) main.c
@@ -17,8 +17,8 @@ main.o: main.c
 number.o: number.c
 	$(CC) $(CFLAGS) number.c
 
-#matrix.o: matrix.c
-#	$(CC) $(CFLAGS) matrix.c
+matrix.o: matrix.c
+	$(CC) $(CFLAGS) matrix.c
 
 #solver.o: solver.c
 #	$(CC) $(CFLAGS) solver.c

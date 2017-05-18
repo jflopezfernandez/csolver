@@ -1,6 +1,11 @@
 #ifndef _NUMBER_H
 #define _NUMBER_H
 
+
+#define RATIONAL_CONVERSION_PRECISION_LIMIT 20
+
+
+
 struct _rational {
 	//enum _numvalue value;
 	

@@ -4,6 +4,7 @@
  *  Notes: all elements initialized to zero by default using createZeroNumberStruct() function in Number.h
  */
 
+/*
 struct _matrix* createMatrix() {
 	struct _matrix *newMatrix = malloc(sizeof(struct _matrix));
 	
@@ -12,13 +13,13 @@ struct _matrix* createMatrix() {
 	
 	return newMatrix;
 }
-
+*/
 /** Dynamic allocation of matrix structure on the heap */
-struct _matrix* createMatrix();
-
+/*struct _matrix* createMatrix();
+*/
 
 /** Heap-allocated identity matrix */
-struct _matrix* createIdentityMatrix() {
+/*struct _matrix* createIdentityMatrix() {
 	struct _matrix *m = malloc(sizeof(struct _matrix));
 	
 	struct _number one_ = newNumber(1,1);
@@ -36,13 +37,13 @@ struct _matrix* createIdentityMatrix() {
 	
 	return m;
 }
-
+*/
 
 /** Function to allow user to enter matrix by row
  *  Notes: function assumes no fractional values need to be entered;
  *         all values entered are then internally converted to number structures
  */
-
+/*
 void enterMatrixByRow(struct _matrix *m) {
 	int a;
 	
@@ -56,9 +57,10 @@ void enterMatrixByRow(struct _matrix *m) {
 		printf("\n");
 	}
 }
-
+*/
 
 /** Sets entire matrix to single number structure */
+/*
 void setMatrix(struct _matrix *m, struct _number *n) {
 	for (int i = 0; i < DIMENSION; ++i) {
 		for (int j = 0; j < DIMENSION; ++j) {
@@ -66,8 +68,10 @@ void setMatrix(struct _matrix *m, struct _number *n) {
 		}
 	}
 }
+*/
 
 /** Set entire matrix programmatically */
+/*
 void setMatrixProgrammatically(struct _matrix *m, 	struct _number *n00, struct _number *n01, struct _number *n02,
 													struct _number *n10, struct _number *n11, struct _number *n12,
 													struct _number *n20, struct _number *n21, struct _number *n22) {
@@ -82,8 +86,10 @@ void setMatrixProgrammatically(struct _matrix *m, 	struct _number *n00, struct _
 	m->m[2][0].d = n20->d; 	m->m[2][1].d = n21->d; 	m->m[2][2].d = n22->d;
 	
 }
+*/
 
 /** Print function for matrix */
+/*
 void printMatrix(struct _matrix *m) {
 	printf("   ");
 	
@@ -109,22 +115,28 @@ void printMatrix(struct _matrix *m) {
 		printf("-");
 	}
 }
-
+*/
 /** Void function to free passed-in matrix structure */
+/*
 void freeMatrix(struct _matrix *m) {
 	free(m);
 }
+*/
 
 /** -------------- USER FUNCTIONS --------------- */
+/*
 void matrix() {
 	struct _matrix *m = createMatrix();
 	enterMatrixByRow(m);
 	printMatrix(m);
 }
+*/
 
+/*
 void imatrix() {
 	struct _matrix *i = createIdentityMatrix();
 	printMatrix(i);
 	
 	freeMatrix(i);
 }
+*/

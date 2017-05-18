@@ -2,7 +2,47 @@
 
 
 /** Function to row-reduce matrix using Gauss-Jordan elimination */
-void reduceMatrix(struct _matrix *m, struct _matrix *i);
+void reduceMatrix(struct _matrix *m, struct _matrix *i) {
+	/** Create matrix to use for reference to verify matrix is reduced */
+	struct _matrix *reference = createIdentityMatrix();
+	
+	/** Data structure for progress check */
+	struct _progress *p = malloc(sizeof(struct _progress));
+	p = checkProgress(m, reference);
+	
+	while (p->reduced != 1) {
+		/** This is where the reduction process loop will go
+		 *  Step 1: Check progress
+		 *  Step 2: If not finished, take x,y coordinates returned and reduce that element
+		 *  Step 3: Repeat
+		 */
+			
+		reduceElement(m, i, &(m->m[p->x][p->y]), p);
+		
+		p = checkProgress(m, reference);
+		
+		#if DEBUG
+			system("PAUSE");
+		#endif
+	}
+	
+	printf("[END] Reduction completed...\n");
+	
+	printLines(3);
+	printMatrixAndId(m,i);
+}
+
+/** Function to reduce immediate element */
+void reduceElement(struct _matrix *m, struct _matrix *i, struct _number *n, struct _progress *p) {
+	int val = getNeededValue(p->x,p->y);
+	
+	struct _number operation;
+	
+	if (val == 1)
+		operation = findComplementOne_(&(m->m[p->x][p->y]));
+	else
+		operation = findComplementZero(&(m->m[p->x][p->y]), &(m->m[p->x][(p->y)+1]));
+}
 
 /** Get Needed value function determines whether the needed value is a 1 or a 0, depending on where in the matrix
  *  it is.
@@ -63,13 +103,49 @@ struct _number findComplementZero(struct _number *m, struct _number *n) {
 }
 
 
-/** Having found the necessary complement, this function carries out the operation on both the matrix and its complementary identity matrix */
-struct _number carryOutOperation(struct _matrix *m, struct _matrix *i, struct _number *n) {
-	int valNeeded = getNeededValue(0,0);
-	struct _number operation;
+/** Data structure and functions used to check progress. When reduced == 1, the reduction process is finished, otherwise, the functions will use the x and y coordinates returned
+ *  to keep going until finished.
+ */
+
+/*
+struct _progress {
+	int reduced;
+	int x;
+	int y;
+};
+*/
+
+
+/** Return only a pointer to the struct, not a copy of the whole thing */
+struct _progress* checkProgress(struct _matrix *m, struct _matrix *r) {
+	struct _progress *p = malloc(sizeof(struct _progress));
+
+	// TODO: Actually check progress
+	for (int i = 0; i < DIMENSION; ++i) {
+		for (int j = 0; j < DIMENSION; ++j) {
+			if (m->m[i][j].n == r->m[i][j].n) {
+				if (m->m[i][j].d == r->m[i][j].d) {
+					// Do nothing; everything matched so far
+				} else {
+					p->reduced = 0;
+					p->x = j;
+					p->y = i;
+					
+					return p;
+				}
+			} else {
+				p->reduced = 0;
+				p->x = j;
+				p->y = i;
+				
+				return p;
+			}
+		}
+	}
 	
-	if (valNeeded == 1)
-		operation = findComplementOne_(n);
-	else
-		operation = findComplementZero(m, n);
+	p->reduced = 1;
+	p->x = 0;
+	p->y = 0;
+	
+	return p;
 }

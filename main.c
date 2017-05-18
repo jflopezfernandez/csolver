@@ -26,11 +26,13 @@ int main()
 	
 	struct _matrix *m = createMatrix();
 	struct _matrix *i = createIdentityMatrix();
+	
 	setMatrixProgrammatically(m, &n1, &n2, &n3,
 								 &n4, &n5, &n6,
 								 &n7, &n8, &n9);
 	printLines(2);
 	printMatrixAndId(m,i);
+	reduceMatrix(m,i);
 	
 	return EXIT_SUCCESS;
 }

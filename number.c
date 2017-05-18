@@ -1,6 +1,37 @@
 #include "includes\Main.h"
 
 
+/** Determines whether number is negative, positive, or zero */
+void testNumber(struct _number *n) {
+	// Determine whether number is rational or decimal
+	if (n->status == RATIONAL) {
+		if (n->type.rat.n < 0) {
+			n->absval = -1;
+		} else if (n->type.rat.n == 0) {
+			n->absval =  0;
+		} else {
+			n->absval =  1;
+		}
+	} else if (n->status == DECIMAL) {
+		// Number is decimal
+		if (n->type.dec < 0) {
+			n->absval = -1;
+		} else if (n->type.dec == 0) {
+			n->absval =  0;
+		} else {
+			n->absval =  1;
+		}
+	} else {
+		// Invalid status
+		
+		#if DEBUG
+			printf("[Error] Invalid status for number!");
+		#endif
+	}
+}
+
+/** Generic function to print number structure data type. Function determines whether number is rational or decimal and takes action accordingly. */
+
 void printNumber(struct _number *n) {
 	if (n->status == DECIMAL) {
 		printf("%.4f", n->type.dec);
@@ -86,6 +117,93 @@ struct _number convertToNumber(int a) {
 	return newNumber;
 }
 
+/** Function to convert rational numbers to decimal form */
+void convertToDecimal(struct _number *n) {
+	// Verify that the number is not already a decimal
+	if (n->status == RATIONAL) {
+		n->status = DECIMAL;
+		
+		double a, b;
+		
+		a = n->type.rat.n;
+		b = n->type.rat.d;
+		
+		n->type.dec = a / b;
+	} else {
+		// Do nothing; number is already in correct format
+		
+		#if DEBUG
+			printf("[Error] Number is already in the specified format.\n");
+		#endif
+	}
+}
+
+/** Function to convert decimal numbers to rational form */
+void convertToRational(struct _number *n) {
+	// Verify that the number is not already a fraction
+	if (n->status == DECIMAL) {
+		// Attempt to convert decimal to rational
+		
+		// Check for zero first
+		if (n->type.dec == 0) {
+			n->status = RATIONAL;
+			
+			n->type.rat.n = 0;
+			n->type.rat.d = 1;
+		} else {
+			// Find out if value is negative
+			testNumber(n);
+			
+			if (n->absval == -1) {
+				// Negative
+				
+				for (int i = -1; i >= (n->type.dec - 2); --i) {
+					for (int j = 1; j <= (-(n->type.dec) + 2); ++j) {
+							
+						if (( (double) i/ (double) j) == n->type.dec) {
+							n->status = RATIONAL;
+							
+							n->type.rat.n = i;
+							n->type.rat.d = j;
+						}
+					}
+				}
+			} else if (n->absval == 0) {
+				// Zero
+				
+				n->status = RATIONAL;
+				
+				n->type.rat.n = 0;
+				n->type.rat.d = 1;
+			} else if (n->absval == 1) {
+				// Number is positive
+				
+				for (int i = 1; i <= (n->type.dec + 2); ++i) {
+					for (int j = 1; j <= (n->type.dec + 2); ++j) {
+						if (((double) i/ (double) j) == n->type.dec) {
+							n->status = RATIONAL;
+							
+							n->type.rat.n = i;
+							n->type.rat.d = j;
+						}
+					}
+				}
+			} else {
+				// Error; Invalid absval for number
+				#if DEBUG
+					printf("[Error] Invalid absval for number...\n");
+				#endif
+			}
+			
+		}
+	} else {
+		// Do nothing; number is already in correct format
+		
+		#if DEBUG
+			printf("[Error] Number is already in the specified format.\n");
+		#endif
+	}
+}
 
 
 /** Add Number */
@@ -107,11 +225,11 @@ struct _number addNumber(struct _number *a, struct _number *b) {
 		}
 	} else {
 		if (a->status == RATIONAL) {
-			//convertNumberToDecimal(a);
+			convertToDecimal(a);
 			// Perform float arithmetic
 			// ...
 		} else {
-			//convertNumberToDecimal(b);
+			convertToDecimal(b);
 			// Perform float arithmetic
 			// ...
 		}

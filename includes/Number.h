@@ -22,6 +22,8 @@ struct _number {
 	union _type 	type;
 };
 
+/** Determines whether number is negative, positive, or zero */
+void testNumber(struct _number *n);
 
 /** Generic function to print number structure data type. Function determines whether number is rational or decimal and takes action accordingly. */
 void printNumber(struct _number *n);
@@ -41,6 +43,12 @@ struct _number createZeroNumberStruct();
 
 /** Converts passed in integer to number structure - assumes whole numbers with no fractional parts */
 struct _number convertToNumber(int a);
+
+/** Function to convert rational numbers to decimal form */
+void convertToDecimal(struct _number *n);
+
+/** Function to convert decimal numbers to rational form */
+void convertToRational(struct _number *n);
 
 /** Add Number */
 struct _number addNumber(struct _number *a, struct _number *b);

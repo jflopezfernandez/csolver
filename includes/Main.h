@@ -1,6 +1,8 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
+#define DIMENSION 3
+
 #define DEBUG 1
 
 #if DEBUG
@@ -17,7 +19,8 @@
 #include "Utils.h"
 #include "Number.h"
 #include "Matrix.h"
-
+#include "Solver.h"
+#include "Problem.h"
 
 
 

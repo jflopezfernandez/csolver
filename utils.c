@@ -36,9 +36,15 @@ void printLines(int n) {
 	}
 }
 
-void initializeProgram() {
+void printDimension(int a) {
+	printf("Matrix Dimension: %i\n", a);
+}
+
+void initializeProgram(int a) {
 	clearScreen();
 	printCompilationInfo();
 	printCStdVersion();
 	printLines(2);
+	printDimension(a);
+	printLines(3);
 }

@@ -7,7 +7,8 @@ void printCompilationInfo();
 void printCStdVersion();
 void clearScreen();
 void printLines(int n);
+void printDimension(int n);
 
-void initializeProgram();
+void initializeProgram(int a);
 
 #endif // _UTILS_H

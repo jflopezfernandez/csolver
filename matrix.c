@@ -97,7 +97,7 @@ void printMatrix(struct _matrix *m) {
 		printf(" |");
 		
 		for (int j = 0; j < DIMENSION; ++j) {
-			printNumber(&(m->m[i][j]));
+			printRationalNumber(&(m->m[i][j]));
 			printf("  |");
 		}
 		

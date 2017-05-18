@@ -96,8 +96,8 @@ struct _number findComplementOne_(struct _number *n) {
 struct _number findComplementZero(struct _number *m, struct _number *n) {
 	struct _number result;
 	
-	printf("Target: "); printNumber(n);
-	printf("Current: "); printNumber(m);
+	printf("Target: "); printRationalNumber(n);
+	printf("Current: "); printRationalNumber(m);
 	
 	printLines(2);
 	

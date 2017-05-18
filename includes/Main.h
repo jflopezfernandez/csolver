@@ -18,10 +18,14 @@
 /** Application Headers */
 #include "Utils.h"
 #include "Number.h"
-#include "Matrix.h"
-#include "Solver.h"
-#include "Problem.h"
 
+#if MAIN_SOLO
+	// Do nothing
+#else
+	#include "Matrix.h"
+	#include "Solver.h"
+	#include "Problem.h"
+#endif
 
 
 #endif // _MAIN_H

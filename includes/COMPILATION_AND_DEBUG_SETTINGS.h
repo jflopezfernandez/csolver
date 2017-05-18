@@ -1,0 +1,14 @@
+#ifndef _COMPILATION_AND_DEBUG_SETTINGS_H
+#define _COMPILATION_AND_DEBUG_SETTINGS_H
+
+
+/** Debug Build Output Detail Levels (1-4) */
+
+#define VERBOSE_OUTPUT 1
+
+#if VERBOSE_OUTPUT
+	#define OUTPUT_LEVEL 1
+#endif
+
+
+#endif // _COMPILATION_AND_DEBUG_SETTINGS_H

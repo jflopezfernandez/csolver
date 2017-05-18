@@ -1,5 +1,37 @@
 #include "includes\Main.h"
 
+/*
+struct _number {
+	//enum _numvalue value;
+	
+	int n; 		// Numerator
+	int d; 		// Denominator
+};
+
+enum _numtype { RATIONAL, DECIMAL };
+enum _numstat { NEGATIVE = -1, ZERO = 0, POSITIVE = 1 };
+
+union _type {
+	struct _number rat;
+	double dec;
+};
+
+
+struct _num {
+	enum _numtype 	status;
+	enum _numstat 	absval;
+	union _type 	type;
+};
+*/
+
+void printNum(struct _num *n) {
+	if (n->status == DECIMAL) {
+		printf("%f", n->type.dec);
+	} else if (n->status == RATIONAL) {
+		printNumber(&(n->type.rat));
+	}
+}
+
 /** Creating number structure on the stack */
 
 struct _number newNumber(int a, int b) {

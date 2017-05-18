@@ -1,6 +1,16 @@
 #ifndef _SOLVER_H
 #define _SOLVER_H
 
+/** Data structure and functions used to check progress. When reduced == 1, the reduction process is finished, otherwise, the functions will use the x and y coordinates returned
+ *  to keep going until finished.
+ */
+
+struct _progress {
+	int reduced;
+	int x;
+	int y;
+};
+
 
 /** Function to row-reduce matrix using Gauss-Jordan elimination */
 void reduceMatrix(struct _matrix *m, struct _matrix *i);
@@ -24,16 +34,9 @@ struct _number findComplementOne_(struct _number *n);
 struct _number findComplementZero(struct _number *m, struct _number *n);
 
 
+/** Multiply matrices by passed-in number structure to obtain 1 */
+void doMultiply(struct _matrix *m1, struct _matrix *m2, struct _number *n, struct _progress *p);
 
-/** Data structure and functions used to check progress. When reduced == 1, the reduction process is finished, otherwise, the functions will use the x and y coordinates returned
- *  to keep going until finished.
- */
-
-struct _progress {
-	int reduced;
-	int x;
-	int y;
-};
 
 
 /** Return only a pointer to the struct, not a copy of the whole thing */

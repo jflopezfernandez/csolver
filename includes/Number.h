@@ -2,9 +2,30 @@
 #define _NUMBER_H
 
 struct _number {
+	//enum _numvalue value;
+	
 	int n; 		// Numerator
 	int d; 		// Denominator
 };
+
+enum _numtype { RATIONAL, DECIMAL };
+enum _numstat { NEGATIVE = -1, ZERO = 0, POSITIVE = 1 };
+
+union _type {
+	struct _number rat;
+	double dec;
+};
+
+
+struct _num {
+	enum _numtype 	status;
+	enum _numstat 	absval;
+	union _type 	type;
+};
+
+void printNum(struct _num *n);
+
+
 
 /** Creating number structure on the stack */
 struct _number newNumber(int a, int b);
@@ -35,7 +56,7 @@ struct _number mulNumber(struct _number *a, struct _number *b);
 struct _number divNumber(struct _number *a, struct _number *b);
 
 /** Function to simplify fractions based on GCD */
-void simplifyNumber(struct _number *n);
+void simplify(struct _number *n);
 
 
 /** Function to print the number using printf function */

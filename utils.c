@@ -6,16 +6,23 @@ int getGCD(int m, int n) {
 	if ((m == 0) || (n == 0))
 		return 1;
 	
-	int remainder = m % n;
+	int r = m % n;
 	
-	while (remainder != 0) {
+	while (r != 0) {
 		m = n;
-		n = remainder;
+		n = r;
 		
-		remainder = m % n;
+		r = m % n;
 	}
 	
-	return n;
+	/** GCD should only be negative if both components are negative */
+	if ((m < 0) && (n < 0)) {
+		return n;
+	} else if (n < 0) {
+		return -n;
+	} else {
+		return n;
+	}
 }
 
 void printCompilationInfo() {

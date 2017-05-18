@@ -4,7 +4,18 @@
  *  Notes: all elements initialized to zero by default using createZeroNumberStruct() function in Number.h
  */
 
-/*
+
+struct _matrix newMatrix() {
+	struct _matrix newMatrix;
+	struct _number zero = createZeroNumberStruct();
+	
+	setMatrix(&newMatrix, &zero);
+	
+	return newMatrix;
+}
+
+/** Dynamic allocation of matrix structure on the heap */
+
 struct _matrix* createMatrix() {
 	struct _matrix *newMatrix = malloc(sizeof(struct _matrix));
 	
@@ -13,17 +24,14 @@ struct _matrix* createMatrix() {
 	
 	return newMatrix;
 }
-*/
-/** Dynamic allocation of matrix structure on the heap */
-/*struct _matrix* createMatrix();
-*/
+
 
 /** Heap-allocated identity matrix */
-/*struct _matrix* createIdentityMatrix() {
+struct _matrix* createIdentityMatrix() {
 	struct _matrix *m = malloc(sizeof(struct _matrix));
 	
-	struct _number one_ = newNumber(1,1);
-	struct _number zero = newNumber(0,1);
+	struct _number one_ = newNumber(0,1,1,1);
+	struct _number zero = newNumber(0,0,1,1);
 	
 	for (int i = 0; i < DIMENSION; ++i) {
 		for (int j = 0; j < DIMENSION; ++j) {
@@ -37,13 +45,14 @@ struct _matrix* createMatrix() {
 	
 	return m;
 }
-*/
+
 
 /** Function to allow user to enter matrix by row
  *  Notes: function assumes no fractional values need to be entered;
  *         all values entered are then internally converted to number structures
  */
-/*
+
+// [TODO: Accept fractional and decimal values ]
 void enterMatrixByRow(struct _matrix *m) {
 	int a;
 	
@@ -51,16 +60,34 @@ void enterMatrixByRow(struct _matrix *m) {
 		printf("Enter row %i: ", i + 1);
 		for (int j = 0; j < DIMENSION; ++j) {
 			scanf("%i", &a);
-			struct _number n = convertToNumber(a);
-			m->m[i][j] = n;
+			
+			m->m[i][j] = convertToNumber(a);
 		}
 		printf("\n");
 	}
 }
-*/
 
-/** Sets entire matrix to single number structure */
-/*
+
+/** Like the above function, this function allows the user to input a matrix by row,
+ *  although this function permits the use of fractions as input
+ */
+
+void enterMatrixByRowFractional(struct _matrix *m) {
+	int a, b;
+	
+	for (int i = 0; i < DIMENSION; ++i) {
+		printf("Enter row %i: ", i + 1);
+		for (int j = 0; j < DIMENSION; ++j) {
+			scanf("%i %i", &a, &b);
+			struct _number n = newNumber(0,a,b,1);
+			simplify(&n);
+			m->m[i][j] = n;
+		}
+	}
+}
+
+/** Sets entire matrix to single number structure. Used during the creation of basic matrix to zero out all the elements. */
+
 void setMatrix(struct _matrix *m, struct _number *n) {
 	for (int i = 0; i < DIMENSION; ++i) {
 		for (int j = 0; j < DIMENSION; ++j) {
@@ -68,7 +95,7 @@ void setMatrix(struct _matrix *m, struct _number *n) {
 		}
 	}
 }
-*/
+
 
 /** Set entire matrix programmatically */
 /*
@@ -89,39 +116,26 @@ void setMatrixProgrammatically(struct _matrix *m, 	struct _number *n00, struct _
 */
 
 /** Print function for matrix */
-/*
+
 void printMatrix(struct _matrix *m) {
-	printf("   ");
-	
-	for (int k = 0; k < (DIMENSION * 8); ++k) {
-		printf("-");
-	}
-	
-	printLines(2);
-	
 	for (int i = 0; i < DIMENSION; ++i) {
 		printf(" |");
 		
 		for (int j = 0; j < DIMENSION; ++j) {
-			printRationalNumber(&(m->m[i][j]));
+			printNumber(&(m->m[i][j]));
 			printf("  |");
 		}
 		
 		printLines(2);
 	}
-	
-	printf("   ");
-	for (int k = 0; k < (DIMENSION * 8); ++k) {
-		printf("-");
-	}
 }
-*/
+
 /** Void function to free passed-in matrix structure */
-/*
+
 void freeMatrix(struct _matrix *m) {
 	free(m);
 }
-*/
+
 
 /** -------------- USER FUNCTIONS --------------- */
 /*

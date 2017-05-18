@@ -1,6 +1,22 @@
 #include "includes\Main.h"
 
 
+/** By reference pass to allow quick value editing */
+void modifyRationalNumberElement(struct _rational *r, int element, int value) {
+	if (element == 1) {
+		r->n = value;
+	} else if (element == 2) {
+		r->d = value;
+	} else {
+		// Do nothing
+		
+		#if DEBUG
+			printf("[Error] Invalid element passed in... function: %s\n", __func__);
+		#endif
+	}
+}
+
+
 /** Determines whether number is negative, positive, or zero */
 void testNumber(struct _number *n) {
 	// Determine whether number is rational or decimal
@@ -36,18 +52,17 @@ void printNumber(struct _number *n) {
 	if (n->status == DECIMAL) {
 		printf("%.4f", n->type.dec);
 	} else if (n->status == RATIONAL) {
-		printRationalNumber(&(n->type.rat));
+		printRationalNumber(n);
 	} else {
-		#if DEBUG
-			printf("[Error] Number has no status!\n");
-		#endif
+		n->status = RATIONAL;
+		printRationalNumber(n);
 	}
 }
 
 
 /** Creating number structure on the stack */
 
-struct _number newNumber(int status, int type, int a, int b, double c) {
+struct _number newNumber(int status, int a, int b, double c) {
 	struct _number newNumber;
 	
 	if (status == RATIONAL) {
@@ -68,8 +83,8 @@ struct _number newNumber(int status, int type, int a, int b, double c) {
 
 
 /** Dynamic memory allocation of number structure on the heap */
-/*
-struct _number* createNumber(int status, int type, int a, int b, double c) {
+
+struct _number* createNumber(int status, int a, int b, double c) {
 	struct _number *newNumber = malloc(sizeof(struct _number));
 	
 	if (status == RATIONAL) {
@@ -87,7 +102,7 @@ struct _number* createNumber(int status, int type, int a, int b, double c) {
 	
 	return newNumber;
 }
-*/
+
 
 
 /** Function that returns zero struct used during matrix creation
@@ -117,6 +132,15 @@ struct _number convertToNumber(int a) {
 	
 	newNumber.type.rat.n = a;
 	newNumber.type.rat.d = 1;
+	
+	return newNumber;
+}
+
+
+/** Converts passed in integer to number structure pointer; also assumes whole numbers with no fractional parts */
+
+struct _number* convertToPNumber(int a) {
+	struct _number *newNumber = createNumber(0,a,1,1);
 	
 	return newNumber;
 }
@@ -163,19 +187,13 @@ void convertToRational(struct _number *n) {
 				
 				for (int i = -1; i >= -RATIONAL_CONVERSION_PRECISION_LIMIT; --i) {
 					for (int j = 1; j <= RATIONAL_CONVERSION_PRECISION_LIMIT; ++j) {
-						printf("%i / %i = %f <--> %f\n", i, j, (double) i / (double) j, n->type.dec);
-						
-						if (((double) i / (double) j) == n->type.dec) {
+						if (n->type.dec == ((double) i / (double) j)) {
 							n->status = RATIONAL;
 							
 							n->type.rat.n = i;
 							n->type.rat.d = j;
 						} else {
-							printf("%f == %f --> ", (double) i / (double) j, n->type.dec);
-							if (((double) i / (double) j) == n->type.dec)
-								printf("TRUE\n");
-							else
-								printf("FALSE\n");
+							// Do nothing
 						}
 					}
 				}
@@ -326,59 +344,220 @@ struct _number subNumber(struct _number *a, struct _number *b) {
 
 
 /** Multiply Number */
-/*
+
 struct _number mulNumber(struct _number *a, struct _number *b) {
 	struct _number result;
 	
-	result.n = a->n * b->n;
-	result.d = a->d * b->d;
+	/** Check to see if both numbers are decimal or rational
+	 *  Convert the rational number to decimal, perform operation, then convert back if possible.
+	 *  If not, leave in decimal form.
+	 */
+	
+	if (a->status == b->status) {
+		if (a->status == DECIMAL) {
+			// Perform float arithmetic
+			result.status = DECIMAL;
+			
+			result.type.dec = a->type.dec * b->type.dec;
+		} else {
+			// Perform rational arithmetic
+				result.status = RATIONAL;
+				
+				result.type.rat.n = a->type.rat.n * b->type.rat.n;
+				result.type.rat.d = a->type.rat.d * b->type.rat.d;
+		}
+	} else {
+		if (a->status == RATIONAL) {
+			result.status = DECIMAL;
+			
+			convertToDecimal(a);
+			result.type.dec = a->type.dec * b->type.dec;
+			convertToRational(a);
+		} else {
+			result.status = DECIMAL;
+			
+			convertToDecimal(b);
+			result.type.dec = a->type.dec * b->type.dec;
+			convertToRational(a);
+		}
+	}
+		
+	simplify(&result);
+	return result;
+}
+
+
+
+/** Divide Number */
+
+struct _number divNumber(struct _number *a, struct _number *b) {
+	struct _number result;
+	
+	/** Check to see if both numbers are decimal or rational
+	 *  Convert the rational number to decimal, perform operation, then convert back if possible.
+	 *  If not, leave in decimal form.
+	 */
+	
+	if (a->status == b->status) {
+		if (a->status == DECIMAL) {
+			// Perform float arithmetic
+			result.status = DECIMAL;
+			
+			result.type.dec = a->type.dec / b->type.dec;
+		} else {
+			// Perform rational arithmetic
+			result.status = RATIONAL;
+			
+			result.type.rat.n = (a->type.rat.n * b->type.rat.d);
+			result.type.rat.d = (a->type.rat.d * b->type.rat.n);
+		}
+	} else {
+		if (a->status == RATIONAL) {
+			result.status = DECIMAL;
+			
+			convertToDecimal(a);
+			result.type.dec = a->type.dec / b->type.dec;
+			convertToRational(a);
+		} else {
+			result.status = DECIMAL;
+			
+			convertToDecimal(b);
+			result.type.dec = a->type.dec / b->type.dec;
+			convertToRational(a);
+		}
+	}
 	
 	simplify(&result);
 	return result;
 }
-*/
 
-
-/** Divide Number */
-/*
-struct _number divNumber(struct _number *a, struct _number *b) {
-	struct _number result;
-	
-	result.n = a->n * b->d;
-	result.d = a->d * b->n;
-	
-	return result;
-}
-*/
 
 
 /** Function to simplify fractions based on GCD */
-/*
+
 void simplify(struct _number *n) {
-	int g = getGCD(n->n, n->d);
+	// Verify number is rational; can't simplify a decimal
 	
-	if (g > 1) {
-		n->n /= g;
-		n->d /= g;
+	if (n->status == DECIMAL) {
+		// Do nothing
+		
+		#if DEBUG
+			printf("[Error] Decimal number passed in...\n");
+		#endif
+	} else if (n->status == RATIONAL) {
+		int g = getGCD(n->type.rat.n,n->type.rat.d);
+		
+		if (g > 1) {
+			// gcd is positive; don't need to worry about signs
+			n->type.rat.n /= g;
+			n->type.rat.d /= g;
+		} else if (g < -1) {
+			// gcd is negative
+			if (n->type.rat.n < 0) {
+				// Number is negative
+				n->type.rat.n /=  g;
+				n->type.rat.d /= -g;
+			} else {
+				// Number is positive
+				n->type.rat.n /= g;
+				n->type.rat.d /= g;
+			}
+		}
+	} else {
+		#if DEBUG
+			printf("[Error] Invalid type!\n");
+		#endif
+	}
+	
+	/** Make sure the denominator is the one with the minus sign at all times, if at all */
+	
+	if (n->status == RATIONAL) {
+		if (n->type.rat.d < 0) {
+			n->type.rat.n = n->type.rat.n;
+			n->type.rat.d = -(n->type.rat.d);
+		}
 	}
 }
-*/
 
 
 /** Function to print the number using printf function */
 
-void printRationalNumber(struct _rational *n) {
-	//simplify(n);
-	
-	if (n->d != 0) {
-		if (n->n == 0) {
-			printf("%5i ", n->n);
-		} else if (n->d == 1) {
-			printf("%5i ", n->n);
+void printRationalNumber(struct _number *n) {
+	if (n->status == RATIONAL) {
+		//simplify(n);
+		if (n->type.rat.d != 0) {
+			if (n->type.rat.n == 0) {
+				printf("%5i ", n->type.rat.n);
+			} else if (n->type.rat.d == 1) {
+				printf("%5i ", n->type.rat.n);
+			} else {
+				printf("%5i/%i ", n->type.rat.n, n->type.rat.d);
+			}
 		} else {
-			printf("%5i/%i ", n->n, n->d);
+			printf("    NaN ");
 		}
 	} else {
-		printf("    NaN ");
+		// Can't simplify a decimal
+	}
+}
+
+
+/** GCD function that returns number structure */
+struct _number getNumberGCD(int a, int b) {
+	int gcd = getGCD(a,b);
+		
+	struct _number result = convertToNumber(gcd);
+	
+	return result;
+}
+
+
+/** Need a copy constructor pls */
+void setEqualTo(struct _number *a, struct _number *b) {
+	if (b->status == DECIMAL) {
+		if (a->status == DECIMAL) {
+			a->type.dec = b->type.dec;
+		} else if (a->status == RATIONAL) {
+			a->status = DECIMAL;
+			
+			a->type.dec = b->type.dec;
+		} else {
+			a->status = DECIMAL;
+			
+			a->type.dec = b->type.dec;
+		}
+	} else if (b->status == RATIONAL) {
+		if (a->status == DECIMAL) {
+			a->status = RATIONAL;
+			
+			a->type.rat.n = b->type.rat.n;
+			a->type.rat.d = b->type.rat.d;
+		} else if (a->status == RATIONAL) {
+			a->type.rat.n = b->type.rat.n;
+			a->type.rat.d = b->type.rat.d;
+		} else {
+			a->status = RATIONAL;
+			
+			a->type.rat.n = b->type.rat.n;
+			a->type.rat.d = b->type.rat.d;
+		}
+		
+	} else {
+		#if DEBUG
+			printf("[Error] No type set for struct _number *b!\n");
+		#endif
+	}
+}
+
+void getNumberStatus(struct _number *n) {
+	printNumber(n);
+	printf(", status: ");
+	
+	if (n->status == RATIONAL) {
+		printf("RATIONAL\n");
+	} else if (n->status == DECIMAL) {
+		printf("DECIMAL\n");
+	} else {
+		printf("[none]\n");
 	}
 }

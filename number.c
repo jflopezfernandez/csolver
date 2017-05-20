@@ -484,7 +484,7 @@ void simplify(struct _number *n) {
 
 void printRationalNumber(struct _number *n) {
 	if (n->status == RATIONAL) {
-		//simplify(n);
+		simplify(n);
 		if (n->type.rat.d != 0) {
 			if (n->type.rat.n == 0) {
 				printf("%5i ", n->type.rat.n);
@@ -559,5 +559,19 @@ void getNumberStatus(struct _number *n) {
 		printf("DECIMAL\n");
 	} else {
 		printf("[none]\n");
+	}
+}
+
+
+/** Returns true if both are rational and equivalent or false if not */
+int testForEquality(struct _number *a, struct _number *b) {
+	if ((a->status == RATIONAL) && (b->status == RATIONAL)) {
+		if ((a->type.rat.n == b->type.rat.n) && (a->type.rat.d == b->type.rat.d)) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	} else {
+		return FALSE;
 	}
 }

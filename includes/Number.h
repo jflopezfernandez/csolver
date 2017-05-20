@@ -90,5 +90,8 @@ void setEqualTo(struct _number *a, struct _number *b);
 /** Get number status */
 void getNumberStatus(struct _number *n);
 
+/** Returns true if both are rational and equivalent or false if not */
+int testForEquality(struct _number *a, struct _number *b);
+
 
 #endif // _NUMBER_H
